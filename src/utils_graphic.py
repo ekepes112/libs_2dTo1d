@@ -30,8 +30,18 @@ def _update_layout(
     figure,
     x: str = 'Wavelength (nm)',
     y: str = 'Intensity (-)'
-):
+) -> plotly.graph_objs._figure.Figure:
+	"""
+	Update the layout of the figure.
 
+	Parameters:
+        figure (plotly.graph_objs._figure.Figure): The figure object to update.
+        x (str, optional): The x-axis title. Defaults to 'Wavelength (nm)'.
+        y (str, optional): The y-axis title. Defaults to 'Intensity (-)'.
+
+	Returns:
+	    plotly.graph_objs._figure.Figure: The updated figure object.
+	"""
     figure.update_layout(
         legend=dict(
             x=.99,
