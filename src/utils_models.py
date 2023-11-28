@@ -422,16 +422,16 @@ def project_to_95variance_pcs(
     kernel_2d: np.ndarray,
     var_limit: float = .95,
 ) -> np.ndarray:
-	"""
-	Projects a given 2D kernel array onto the principal components that explain var_limit % of the variance.
+    """
+    Projects a given 2D kernel array onto the principal components that explain var_limit % of the variance.
 
     Args:
-	    kernel_2d (np.ndarray): The 2D kernel to be projected..
-	    var_limit (float): The percentage of variance to be explained by the principal components. Defaults to .95.
+        kernel_2d (np.ndarray): The 2D kernel to be projected..
+        var_limit (float): The percentage of variance to be explained by the principal components. Defaults to .95.
 
     Returns:
         np.ndarray: The mean of the principal components that explain var_limit % of the variance.
-	"""
+    """
     pca_of_kernel = PCA()
     transformed_kernel = pca_of_kernel.fit_transform(kernel_2d)
     pc_count = min([
@@ -612,7 +612,7 @@ def project_weights_to_1d(
         weights_2d_conv = model.get_layer(layer_name).get_weights()
         projected_weight_matrices[layer_name]['bias'] = weights_2d_conv[1]
 
-        if layer_name == 'conv1_conv':  #TODO THIS might need adjustments
+        if layer_name == 'conv1_conv':  # TODO THIS might need adjustments
             weights_2d_conv[0] = weights_2d_conv[0].mean(
                 axis=2,
                 keepdims=True
