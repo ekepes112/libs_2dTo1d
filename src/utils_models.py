@@ -594,6 +594,7 @@ def project_weights_to_1d(
     model,
     projection_func: Callable,
     verbose: bool = True,
+    **kwargs,
 ) -> dict:
     """
     Generate the projected weight matrices for each 2D convolutional layer in the model.
@@ -632,7 +633,8 @@ def project_weights_to_1d(
 
         projected_weight_matrices[layer_name]['weights'] = project_layer_to_1d(
             layer_weights_from_2d_model=weights_2d_conv[0],
-            projection_func=projection_func
+            projection_func=projection_func,
+            **kwargs
         )
 
     return projected_weight_matrices
