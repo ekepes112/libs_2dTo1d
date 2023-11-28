@@ -18,17 +18,17 @@ def squeeze_model(
     base_model,
     input_dims,
     stochastic_depth: float = .5
-):
+) -> models.Model:
     """
     Generates a squeezed model by converting a base model to a 1D model.
 
     Args:
-        base_model (keras.Model): The base model to be squeezed.
+        base_model (keras.models.Model): The base model to be squeezed.
         input_dims (tuple): The input dimensions of the model.
         stochastic_depth (float, optional): The probability of dropping out a layer in the model. Defaults to 0.5.
 
     Returns:
-        keras.Model: The squeezed model.
+        keras.models.Model: The squeezed model.
     """
     print_cond = False
 
@@ -222,7 +222,7 @@ def squeeze_model(
         layer_references[base_model.layers[-1].name],
         name=base_model.name
     )
-    return (model)
+    return model
 
 
 def validate_checkpoint_dir(
@@ -252,7 +252,7 @@ def validate_checkpoint_dir(
     else:
         print('directory already exists')
 
-    return (checkpoint_path)
+    return checkpoint_path
 
 
 def create_checkpoint_callback(
@@ -279,7 +279,7 @@ def create_checkpoint_callback(
         mode='min',
         initial_value_threshold=start_at
     )
-    return (callback_checkpointing)
+    return callback_checkpointing
 
 
 def seed_everything(
@@ -338,7 +338,7 @@ def project_layer_to_1d(
                 )
             )
 
-    return (projected_kernels)
+    return projected_kernels
 
 
 def plot_projected_kernels(
@@ -376,7 +376,7 @@ def plot_projected_kernels(
     fig.tight_layout()
     fig.show()
 
-    return (fig)
+    return fig
 
 
 def project_to_2pcs(
@@ -639,7 +639,7 @@ def project_weights_to_1d(
 def assign_projected_weights(
     model,
     projected_weights: dict,
-) -> keras.models.Model:
+) -> models.Model:
     """
     Assigns projected weights to a given model.
 
@@ -650,7 +650,7 @@ def assign_projected_weights(
     Returns:
         keras.models.Model: The model with the assigned projected weights.
     """
-    model = keras.models.clone_model(model)
+    model = models.clone_model(model)
 
     for layer_name in projected_weights:
         print(layer_name)
