@@ -662,7 +662,7 @@ def assign_projected_weights(
 
         new_weights = projected_weights.get(layer_name).get('weights')
         if isinstance(new_weights, list):
-            new_weights = np.ndarray(new_weights)
+            new_weights = np.array(new_weights)
 
         new_weights = new_weights.T
         new_weights = new_weights.reshape(
