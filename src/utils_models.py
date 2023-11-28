@@ -314,7 +314,7 @@ def seed_everything(
 def project_layer_to_1d(
     layer_weights_from_2d_model: np.ndarray,
     projection_func: Callable,
-    **kwargs
+    **kwargs: dict,
 ) -> list:
     """
     Project a 2D layer to a 1D list using a projection function.
@@ -381,7 +381,7 @@ def plot_projected_kernels(
     return fig
 
 
-def project_to_2pcs(
+def project_to_npcs(
     kernel_2d: np.ndarray,
     n_pc: int,
 ) -> np.ndarray:
