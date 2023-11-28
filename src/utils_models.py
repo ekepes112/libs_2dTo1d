@@ -313,7 +313,8 @@ def seed_everything(
 
 def project_layer_to_1d(
     layer_weights_from_2d_model: np.ndarray,
-    projection_func: Callable
+    projection_func: Callable,
+    **kwargs
 ) -> list:
     """
     Project a 2D layer to a 1D list using a projection function.
@@ -334,7 +335,8 @@ def project_layer_to_1d(
         for channel_ndx in range(channel_count):
             projected_kernels.append(
                 projection_func(
-                    layer_weights_from_2d_model[..., channel_ndx, kernel_ndx]
+                    layer_weights_from_2d_model[..., channel_ndx, kernel_ndx],
+                    **kwargs
                 )
             )
 
