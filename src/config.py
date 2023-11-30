@@ -5,8 +5,8 @@ EPOCH_COUNT = 500
 MSE_LOW_THRESHOLD = 15
 
 PROJECT_NAME = 'libs_2dTo1d'
-DRIVE_PATH = '/content/gdrive'
-RESULTS_PATH = f"{DRIVE_PATH}/My Drive/projects/{PROJECT_NAME}/temp"
+DRIVE_PATH = '/content/gdrive/MyDrive'
+RESULTS_PATH = f"{DRIVE_PATH}/projects/{PROJECT_NAME}/temp"
 DATA_PATH = '.archive/datasets/'
 CHECKPOINT_DIR = '/content/checkpoints'
 
