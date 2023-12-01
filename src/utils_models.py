@@ -17,7 +17,8 @@ import tensorflow_addons as tfa
 def squeeze_model(
     base_model,
     input_dims,
-    stochastic_depth: float = .5
+    stochastic_depth: float = .5,
+    keep_batch_norm: bool = True,
 ) -> models.Model:
     """
     Generates a squeezed model by converting a base model to a 1D model.
@@ -26,6 +27,7 @@ def squeeze_model(
         base_model (keras.models.Model): The base model to be squeezed.
         input_dims (tuple): The input dimensions of the model.
         stochastic_depth (float, optional): The probability of dropping out a layer in the model. Defaults to 0.5.
+        keep_batch_norm (bool, optional): Whether to keep the batch normalization layers in the model. Defaults to True.
 
     Returns:
         keras.models.Model: The squeezed model.
@@ -148,30 +150,32 @@ def squeeze_model(
 
         if isinstance(
             layer,
-            layers.BatchNormalization
+            layers.BatchNormalization,
         ):
-
             if print_cond:
                 print('adding Batch Normalization layer')
-            layer_references[layer.name] = layers.BatchNormalization(
-                # axis=layer.axis
-                axis=-1,
-                name=layer.name,
-                momentum=layer.momentum,
-                epsilon=layer.epsilon,
-                center=layer.center,
-                scale=layer.scale,
-                beta_initializer=layer.beta_initializer,
-                gamma_initializer=layer.gamma_initializer,
-                moving_mean_initializer=layer.moving_mean_initializer,
-                moving_variance_initializer=layer.moving_variance_initializer,
-                beta_regularizer=layer.beta_regularizer,
-                gamma_regularizer=layer.gamma_regularizer,
-                beta_constraint=layer.beta_constraint,
-                gamma_constraint=layer.gamma_constraint
-            )(
-                layer_references[inbound_connections[0]]
-            )
+            if keep_batch_norm:
+                layer_references[layer.name] = layers.BatchNormalization(
+                    # axis=layer.axis
+                    axis=-1,
+                    name=layer.name,
+                    momentum=layer.momentum,
+                    epsilon=layer.epsilon,
+                    center=layer.center,
+                    scale=layer.scale,
+                    beta_initializer=layer.beta_initializer,
+                    gamma_initializer=layer.gamma_initializer,
+                    moving_mean_initializer=layer.moving_mean_initializer,
+                    moving_variance_initializer=layer.moving_variance_initializer,
+                    beta_regularizer=layer.beta_regularizer,
+                    gamma_regularizer=layer.gamma_regularizer,
+                    beta_constraint=layer.beta_constraint,
+                    gamma_constraint=layer.gamma_constraint
+                )(
+                    layer_references[inbound_connections[0]]
+                )
+            else:
+                layer_references[layer.name] = layers.Activation('linear')
 
         if isinstance(
             layer,
@@ -239,7 +243,6 @@ def validate_checkpoint_dir(
     Returns:
         The path to the checkpoint file.
     """
-
     checkpoint_path = checkpoint_dir.joinpath(
         f'{experiment_tag}'
     ).joinpath('cp-min_val_loss.ckpt')
