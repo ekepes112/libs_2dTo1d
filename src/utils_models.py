@@ -699,3 +699,112 @@ def save_model(
     model._name = f'{model.name}_projected_{model_name}'
     model.save(save_dir.joinpath(model.name))
     return None
+
+
+class RandomMultiplierLayer(Layer):
+    def __init__(
+        self,
+        random_range_min: float,
+        random_range_max: float,
+        **kwargs
+    ) -> None:
+        """
+        Initializes a RandomMultiplierLayer object.
+
+        Args:
+            random_range_min (float): The minimum value for the random range.
+            random_range_max (float): The maximum value for the random range.
+
+        Returns:
+            None
+        """
+        super(RandomMultiplierLayer, self).__init__(**kwargs)
+        self.min_val = random_range_min
+        self.max_val = random_range_max
+
+    def call(
+        self,
+        inputs,
+        training: bool,
+    ):
+        """
+        Applies a random multiplier to the inputs if training is set to True.
+
+        Args:
+            inputs: The input tensor.
+            training (bool): Whether the model is in training mode or not.
+
+        Returns:
+            The multiplied inputs if training is True, otherwise the inputs are returned as is.
+        """
+        if not training:
+            return inputs
+        random_multiplier = uniform(
+            [1],
+            minval=self.min_val,
+            maxval=self.max_val
+        )
+        return multiply(inputs, 1+random_multiplier)
+
+
+class RandomMask(Layer):
+    def __init__(
+        self,
+        size: int,
+        **kwargs,
+    ) -> None:
+        """
+        Initialize the RandomMask object.
+
+        Parameters:
+            size (int): The size of the object.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            None
+        """
+        super(RandomMask, self).__init__(**kwargs)
+        self.size = size
+
+    def call(
+        self,
+        inputs,
+        training: bool,
+    ):
+        """
+        Generates the function comment for the given function body.
+
+        Args:
+            inputs (ndarray): The input array.
+            training (bool): Whether the model is in training mode.
+
+        Returns:
+            ndarray: The masked input array.
+        """
+        if not training:
+            return inputs
+        index = uniform(
+            shape=[],
+            minval=0,
+            maxval=inputs.shape[1]-self.size,
+            dtype=dtypes.int32,
+            seed=None,
+            name=None
+        )
+        mask = concat(
+            [ones(
+                [index],
+                dtype=dtypes.float32
+            ),
+                zeros(
+                [self.size],
+                dtype=dtypes.float32
+            ),
+                ones(
+                [inputs.shape[1] - index - self.size],
+                dtype=dtypes.float32
+            )],
+            axis=0
+        )
+
+        return multiply(inputs, mask)
