@@ -739,12 +739,12 @@ class RandomMultiplierLayer(layers.Layer):
         """
         if not training:
             return inputs
-        random_multiplier = uniform(
+        random_multiplier = tf.random.uniform(
             [1],
             minval=self.min_val,
             maxval=self.max_val
         )
-        return multiply(inputs, 1+random_multiplier)
+        return tf.math.multiply(inputs, 1+random_multiplier)
 
 
 class RandomMask(layers.Layer):
@@ -783,26 +783,26 @@ class RandomMask(layers.Layer):
         """
         if not training:
             return inputs
-        index = uniform(
+        index = tf.random.uniform(
             shape=[],
             minval=0,
             maxval=inputs.shape[1]-self.size,
-            dtype=dtypes.int32,
+            dtype=tf.dtypes.int32,
             seed=None,
             name=None
         )
-        mask = concat(
-            [ones(
+        mask = tf.concat(
+            [tg.ones(
                 [index],
-                dtype=dtypes.float32
+                dtype=tf.dtypes.float32
             ),
-                zeros(
+                tf.zeros(
                 [self.size],
-                dtype=dtypes.float32
+                dtype=tf.dtypes.float32
             ),
-                ones(
+                tf.ones(
                 [inputs.shape[1] - index - self.size],
-                dtype=dtypes.float32
+                dtype=tf.dtypes.float32
             )],
             axis=0
         )
