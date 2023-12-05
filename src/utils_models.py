@@ -792,7 +792,7 @@ class RandomMask(layers.Layer):
             name=None
         )
         mask = tf.concat(
-            [tg.ones(
+            [tf.ones(
                 [index],
                 dtype=tf.dtypes.float32
             ),
@@ -807,4 +807,4 @@ class RandomMask(layers.Layer):
             axis=0
         )
 
-        return multiply(inputs, mask)
+        return tf.math.multiply(inputs, mask)
