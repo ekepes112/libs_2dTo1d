@@ -701,7 +701,7 @@ def save_model(
     return None
 
 
-class RandomMultiplierLayer(Layer):
+class RandomMultiplierLayer(layers.Layer):
     def __init__(
         self,
         random_range_min: float,
@@ -747,7 +747,7 @@ class RandomMultiplierLayer(Layer):
         return multiply(inputs, 1+random_multiplier)
 
 
-class RandomMask(Layer):
+class RandomMask(layers.Layer):
     def __init__(
         self,
         size: int,
