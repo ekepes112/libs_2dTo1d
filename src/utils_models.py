@@ -19,6 +19,7 @@ def squeeze_model(
     input_dims,
     stochastic_depth: float = .5,
     keep_batch_norm: bool = True,
+    verbose:bool = False,
 ) -> models.Model:
     """
     Generates a squeezed model by converting a base model to a 1D model.
@@ -32,16 +33,15 @@ def squeeze_model(
     Returns:
         keras.models.Model: The squeezed model.
     """
-    print_cond = False
 
     layer_references = {}
 
     layer_references[base_model.layers[0].name] = layers.Input(input_dims)
 
     for layer in base_model.layers[1:]:
-        if print_cond:
+        if verbose:
             print(layer.name)
-        # if print_cond: print(layer_references)
+        # if verbose: print(layer_references)
 
         inbound_connections = []
 
@@ -49,7 +49,7 @@ def squeeze_model(
                 ._inbound_nodes[0]\
                 .iterate_inbound():
 
-            if print_cond:
+            if verbose:
                 print(inbound_layer.name)
             inbound_connections.append(inbound_layer.name)
 
@@ -58,7 +58,7 @@ def squeeze_model(
             layers.Conv2D
         ):
 
-            if print_cond:
+            if verbose:
                 print('adding Conv1D layer')
             layer_references[layer.name] = layers.Conv1D(
                 filters=layer.filters,
@@ -87,7 +87,7 @@ def squeeze_model(
             layers.Activation
         ):
 
-            if print_cond:
+            if verbose:
                 print('adding Activation layer')
             layer_references[layer.name] = layers.Activation(
                 layer.activation,
@@ -127,7 +127,7 @@ def squeeze_model(
             layers.Add
         ):
 
-            if print_cond:
+            if verbose:
                 print('adding Add layer')
             if stochastic_depth > 0:
                 # https://www.tensorflow.org/addons/api_docs/python/tfa/layers/StochasticDepth
@@ -152,7 +152,7 @@ def squeeze_model(
             layer,
             layers.BatchNormalization,
         ):
-            if print_cond:
+            if verbose:
                 print('adding Batch Normalization layer')
             if keep_batch_norm:
                 layer_references[layer.name] = layers.BatchNormalization(
@@ -182,7 +182,7 @@ def squeeze_model(
             layers.GlobalAveragePooling2D
         ):
 
-            if print_cond:
+            if verbose:
                 print('adding Global Average Pooling layer')
             layer_references[layer.name] = layers.GlobalAveragePooling1D(
                 name=layer.name
@@ -195,7 +195,7 @@ def squeeze_model(
             layers.MaxPooling2D
         ):
 
-            if print_cond:
+            if verbose:
                 print('adding Max Pooling layer')
             layer_references[layer.name] = layers.MaxPooling1D(
                 name=layer.name,
@@ -212,7 +212,7 @@ def squeeze_model(
             layers.ZeroPadding2D
         ):
 
-            if print_cond:
+            if verbose:
                 print('adding Zero Padding layer')
             layer_references[layer.name] = layers.ZeroPadding1D(
                 padding=layer.padding[0],
