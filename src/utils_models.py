@@ -41,10 +41,8 @@ def squeeze_model(
     for layer in base_model.layers[1:]:
         if verbose:
             print(layer.name)
-        # if verbose: print(layer_references)
 
         inbound_connections = []
-
         for inbound_layer, _, _, _ in layer\
                 ._inbound_nodes[0]\
                 .iterate_inbound():
@@ -52,12 +50,10 @@ def squeeze_model(
             if verbose:
                 print(inbound_layer.name)
             inbound_connections.append(inbound_layer.name)
-
         if isinstance(
             layer,
             layers.Conv2D
         ):
-
             if verbose:
                 print('adding Conv1D layer')
             layer_references[layer.name] = layers.Conv1D(
@@ -86,7 +82,6 @@ def squeeze_model(
             layer,
             layers.Activation
         ):
-
             if verbose:
                 print('adding Activation layer')
             layer_references[layer.name] = layers.Activation(
@@ -100,7 +95,6 @@ def squeeze_model(
             layer,
             layers.Dense
         ):
-
             print('adding Dense layer')
             dropout_layer = layers.Dropout(.2)(
                 layer_references[inbound_connections[0]]
@@ -126,7 +120,6 @@ def squeeze_model(
             layer,
             layers.Add
         ):
-
             if verbose:
                 print('adding Add layer')
             if stochastic_depth > 0:
@@ -152,9 +145,9 @@ def squeeze_model(
             layer,
             layers.BatchNormalization,
         ):
-            if verbose:
-                print('adding Batch Normalization layer')
             if keep_batch_norm:
+                if verbose:
+                    print('adding Batch Normalization layer')
                 layer_references[layer.name] = layers.BatchNormalization(
                     # axis=layer.axis
                     axis=-1,
@@ -175,13 +168,16 @@ def squeeze_model(
                     layer_references[inbound_connections[0]]
                 )
             else:
-                layer_references[layer.name] = layers.Activation('linear')
+                if verbose:
+                    print('skipping Batch Normalization layer')
+                layer_references[layer.name] = layers.Activation('linear')(
+                    layer_references[inbound_connections[0]]
+                )
 
         if isinstance(
             layer,
             layers.GlobalAveragePooling2D
         ):
-
             if verbose:
                 print('adding Global Average Pooling layer')
             layer_references[layer.name] = layers.GlobalAveragePooling1D(
@@ -194,7 +190,6 @@ def squeeze_model(
             layer,
             layers.MaxPooling2D
         ):
-
             if verbose:
                 print('adding Max Pooling layer')
             layer_references[layer.name] = layers.MaxPooling1D(
@@ -211,7 +206,6 @@ def squeeze_model(
             layer,
             layers.ZeroPadding2D
         ):
-
             if verbose:
                 print('adding Zero Padding layer')
             layer_references[layer.name] = layers.ZeroPadding1D(
