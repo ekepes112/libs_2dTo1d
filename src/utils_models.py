@@ -17,6 +17,7 @@ import tensorflow_addons as tfa
 def squeeze_model(
     base_model,
     input_dims,
+    dropout_rate: float = .2,
     stochastic_depth: float = .5,
     keep_batch_norm: bool = True,
     verbose:bool = False,
@@ -96,7 +97,9 @@ def squeeze_model(
             layers.Dense
         ):
             print('adding Dense layer')
-            dropout_layer = layers.Dropout(.2)(
+            dropout_layer = layers.Dropout(
+                dropout_rate
+            )(
                 layer_references[inbound_connections[0]]
             )
             layer_references[layer.name] = layers.Dense(
